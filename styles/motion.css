@@ -1,0 +1,84 @@
+/* Small shared styles for icons and gentle movement effects. */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.motion-reveal {
+  will-change: opacity, transform;
+}
+
+.motion-enabled .motion-reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity 560ms ease var(--motion-delay, 0ms), transform 560ms cubic-bezier(.2, .75, .25, 1) var(--motion-delay, 0ms);
+}
+
+.motion-enabled .motion-reveal.motion-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.summary-card,
+.auth-card,
+.goal-card,
+.feature-card,
+.story-card,
+.step-card,
+.trust-item {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.summary-card:hover,
+.auth-card:hover,
+.goal-card:hover,
+.feature-card:hover,
+.story-card:hover,
+.step-card:hover,
+.trust-item:hover {
+  transform: translateY(-3px);
+}
+
+.motion-enabled .motion-reveal.motion-visible:hover {
+  transform: translate3d(0, -3px, 0);
+}
+
+.btn-primary:active,
+.btn-outline:active,
+.action-chip:active {
+  transform: scale(.98);
+}
+
+.dashboard-row {
+  animation: row-enter 360ms ease both;
+}
+
+@keyframes row-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .motion-reveal,
+  .motion-enabled .motion-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

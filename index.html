@@ -1,0 +1,440 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoloRise</title>
+    <!-- Google Fonts: Sora -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/images/KoloRise-Logo-001.png" type="image/png">
+    <!-- Lucide Icons -->
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/motion.css">
+</head>
+<body>
+
+    <!-- The class names connect this page to styles/style.css. -->
+    <!-- The IDs below are names JavaScript uses to find things on the page. -->
+    <!--NAVBAR SECTION-->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-mark">
+                    <img src="assets/images/KoloRise-Logo-001.png" alt="KoloRise logo">
+                </div>
+                <span class="logo-text">Kolo<span>Rise</span></span>
+            </a>
+
+            <div class="nav-menu" id="primaryNavigation">
+                <nav class="nav-links" aria-label="Main navigation">
+                    <a href="#story">Our Story</a>
+                    <a href="#savings">Savings</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#features">Features</a>
+                    <a href="#founder">Founder</a>
+                    <a href="#hq">HQ</a>
+                </nav>
+
+                <div class="nav-actions">
+                    <a href="auth/signIn.html" class="btn-text">Sign In</a>
+                    <a href="auth/signUp.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+
+            <button class="mobile-menu-toggle" id="menuToggle" type="button" aria-label="Open navigation menu" aria-controls="primaryNavigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="badge-pill">
+                    <i data-lucide="sparkles"></i> Save Today. Rise Tomorrow.
+                </div>
+                <h1>From Kóló wisdom to digital growth</h1>
+                <p>Build better saving habits, set meaningful financial goals, and watch your progress grow securely with KoloRise.</p>
+                
+                <div class="hero-buttons">
+                    <a href="auth/signUp.html" class="btn btn-primary btn-lg">Start Saving <i data-lucide="arrow-right"></i></a>
+                    <a href="auth/signIn.html" class="btn btn-outline btn-lg">Sign In</a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3 data-count-target="4.5" data-count-prefix="NGN " data-count-suffix="M+" data-count-decimals="1" aria-label="NGN 4.5 million plus">NGN 4.5M+</h3>
+                        <p>Total Saved</p>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <h3 data-count-target="1000" data-count-suffix="+" data-count-decimals="0" aria-label="1,000 plus">1,000+</h3>
+                        <p>Active Savers</p>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <h3 data-count-target="99.9" data-count-suffix="%" data-count-decimals="1" aria-label="99.9 percent">99.9%</h3>
+                        <p>Goal Success</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Dashboard Visual Card -->
+            <div class="hero-visual">
+                <div class="dashboard-card floating">
+                    <div class="dash-header">
+                        <div class="user-greeting">
+                            <span class="avatar">DA</span>
+                            <div>
+                                <h4>David Ayodele</h4>
+                                <small>Sample Account</small>
+                            </div>
+                        </div>
+                        <span class="status-badge"><i data-lucide="shield-check"></i> Secure</span>
+                    </div>
+
+                    <p class="dash-preview-note">Sample dashboard preview. Amounts are illustrative.</p>
+
+                    <div class="dash-balance-box">
+                        <p class="label">Total Active Savings</p>
+                        <h2>NGN 350,000.00</h2>
+                        <span class="trend positive"><i data-lucide="trending-up"></i> +24.8% this month</span>
+                    </div>
+
+                    <div class="dash-goal-widget">
+                        <div class="goal-info">
+                            <span>Goal: KoloRise Expansion</span>
+                            <span class="percentage">70%</span>
+                        </div>
+                        <div class="goal-amounts">
+                            <strong>NGN 350,000</strong> / NGN 500,000
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="dash-quick-actions">
+                        <a class="action-chip" href="auth/signUp.html"><i data-lucide="plus-circle"></i> Try demo deposit</a>
+                        <a class="action-chip secondary" href="auth/signUp.html"><i data-lucide="target"></i> Set a goal</a>
+                    </div>
+                </div>
+
+                <div class="floating-badge badge-1">
+                    <i data-lucide="check-circle-2"></i> Habit Streak: 21 Days
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST / VALUE BAR -->
+    <section class="trust-bar">
+        <div class="container trust-grid">
+            <div class="trust-item">
+                <div class="trust-icon"><i data-lucide="wallet"></i></div>
+                <div>
+                    <h4>Save Consistently</h4>
+                    <p>Build a healthy, automated saving habit effortlessly.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i data-lucide="target"></i></div>
+                <div>
+                    <h4>Set Intentional Goals</h4>
+                    <p>Give every kobo you save a clear purpose.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i data-lucide="line-chart"></i></div>
+                <div>
+                    <h4>Track Progress</h4>
+                    <p>Watch your milestones grow closer every day.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i data-lucide="shield-check"></i></div>
+                <div>
+                    <h4>Stay in Control</h4>
+                    <p>Bank-grade encryption protecting your journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE STORY BEHIND KOLORISE -->
+    <section class="story-section section-padding" id="story">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Our Origin</span>
+                <h2>From the Kóló Traditional Saving to KoloRise</h2>
+                <p>The cultural wisdom of saving, reimagined for the digital generation.</p>
+            </div>
+
+            <div class="story-grid">
+                <div class="story-card">
+                    <div class="story-icon"><i data-lucide="piggy-bank"></i></div>
+                    <h3>The Traditional Kóló</h3>
+                    <p>In Nigerian culture, particularly within Yoruba communities, <strong>kóló</strong> traditionally refers to a local handmade money box or piggy bank. It represents more than just a container; it represents <strong>discipline, patience, consistency</strong>, and the willingness to sacrifice today for a better tomorrow.</p>
+                </div>
+                <div class="story-card">
+                    <div class="story-icon"><i data-lucide="smartphone"></i></div>
+                    <h3>The Digital Evolution</h3>
+                    <p>Growing up and seeing how familiar this concept is within our culture inspired a vital question: <em>What if the philosophy behind the traditional kóló could be brought into the modern digital world?</em> That question became the beginning of KoloRise.</p>
+                </div>
+                <div class="story-card">
+                    <div class="story-icon"><i data-lucide="trending-up"></i></div>
+                    <h3>The Meaning of Rise</h3>
+                    <p>After saving comes <strong>rising</strong>&mdash;rising financially, in confidence, and toward meaningful goals. Combining <strong>Kóló</strong> (cultural foundation) with <strong>Rise</strong> (progress and destination) created KoloRise: the journey from saving to growth.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAVINGS GOALS SECTION -->
+    <section class="savings-section section-padding bg-light" id="savings">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Goal-Based Savings</span>
+                <h2>Turn your ambitions into funded plans.</h2>
+                <p>Create dedicated containers for everything that matters in your life.</p>
+            </div>
+
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <div class="goal-card-top">
+                        <div class="goal-icon education"><i data-lucide="graduation-cap"></i></div>
+                        <span class="badge-status">Active</span>
+                    </div>
+                    <h3>Advanced Certification</h3>
+                    <p class="goal-target">NGN 350,000 / NGN 500,000</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                    <div class="goal-footer">
+                        <span>70% Complete</span>
+                        <span>NGN 150k left</span>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-card-top">
+                        <div class="goal-icon laptop"><i data-lucide="laptop"></i></div>
+                        <span class="badge-status">Active</span>
+                    </div>
+                    <h3>New Work Laptop</h3>
+                    <p class="goal-target">NGN 180,000 / NGN 400,000</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%;"></div>
+                    </div>
+                    <div class="goal-footer">
+                        <span>45% Complete</span>
+                        <span>NGN 220k left</span>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-card-top">
+                        <div class="goal-icon emergency"><i data-lucide="shield-alert"></i></div>
+                        <span class="badge-status">On Track</span>
+                    </div>
+                    <h3>Emergency Fund</h3>
+                    <p class="goal-target">NGN 120,000 / NGN 200,000</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                    <div class="goal-footer">
+                        <span>60% Complete</span>
+                        <span>NGN 80k left</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works section-padding" id="how-it-works">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Simple Process</span>
+                <h2>How KoloRise Works</h2>
+                <p>Get started on your savings journey in four simple steps.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i data-lucide="user-plus"></i></div>
+                    <h3>Create Your Account</h3>
+                    <p>Sign up securely in less than 2 minutes and set up your personal profile.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i data-lucide="target"></i></div>
+                    <h3>Set a Goal</h3>
+                    <p>Define what you are saving for, set your target amount, and timeline.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i data-lucide="wallet"></i></div>
+                    <h3>Save Consistently</h3>
+                    <p>Automate your deposits or add funds manually according to your plan.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i data-lucide="trending-up"></i></div>
+                    <h3>Rise Toward Success</h3>
+                    <p>Monitor your progress, build unshakeable habits, and achieve your targets.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features section-padding bg-light" id="features">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Platform Features</span>
+                <h2>Everything you need to save with purpose.</h2>
+                <p>Powerful tools engineered to keep your financial discipline intact.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="target"></i></div>
+                    <h3>Goal-Based Savings</h3>
+                    <p>Create segregated savings pots tailored for specific life projects and targets.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="repeat"></i></div>
+                    <h3>Flexible Saving Plans</h3>
+                    <p>Choose daily, weekly, or custom schedules that fit your income flow.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <h3>Progress Tracking</h3>
+                    <p>Visual analytics and milestone bars giving you absolute clarity on your growth.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="bell"></i></div>
+                    <h3>Saving Reminders</h3>
+                    <p>Intelligent notifications that keep you consistent and accountable.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                    <h3>Secure & Encrypted</h3>
+                    <p>Your data and financial records are secured with industry-standard protocols.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i data-lucide="layout"></i></div>
+                    <h3>Intuitive Experience</h3>
+                    <p>A clean, distraction-free dashboard built for seamless navigation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEET THE FOUNDER SECTION -->
+    <section class="founder-section section-padding" id="founder">
+        <div class="container grid-2">
+            <div class="founder-image-wrapper">
+                <img src="assets/images/IMG_1993.png" alt="David Ayodele - Founder & CEO KoloRise" class="founder-photo">
+            </div>
+            <div class="founder-content">
+                <span class="section-tag">Meet The Founder</span>
+                <h2>David Ayodele</h2>
+                <p class="founder-title">Founder & CEO, KoloRise</p>
+                <p>KoloRise started as an idea built around a simple observation: many people understand the importance of saving, but developing and maintaining a consistent saving habit can be difficult.</p>
+                <p>As a young Nigerian, I wanted to explore how technology could make saving more structured, accessible, and relevant to a generation growing up in a digital world.</p>
+                
+                <blockquote class="founder-quote">
+                    "KoloRise started with a simple question: how can we bring the familiar habit of saving into the digital world? The journey begins with saving, and the goal is to grow."
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- KOLORISE HQ SECTION -->
+    <section class="hq-section section-padding bg-light" id="hq">
+        <div class="container grid-2">
+            <div class="hq-text">
+                <span class="section-tag">Our Headquarters</span>
+                <h2>Welcome to KoloRise HQ</h2>
+                <p>Our home. Our people. Our vision.</p>
+                <p>KoloRise is more than an idea on a screen. It represents a commitment to building a modern financial experience rooted in familiar Nigerian values, combining deep cultural heritage with elite engineering standards.</p>
+                <ul class="check-list">
+                    <li><i data-lucide="check"></i> State-of-the-art engineering workspace</li>
+                    <li><i data-lucide="check"></i> Dedicated customer success & security ops</li>
+                    <li><i data-lucide="check"></i> Rooted in community development</li>
+                </ul>
+            </div>
+            <div class="hq-image-wrapper">
+                <img src="assets/images/Kolo-Building.png" alt="KoloRise Headquarters" class="hq-photo">
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2>Ready to start your rise?</h2>
+            <p>Join thousands of smart savers building better financial habits today.</p>
+            <div class="cta-actions">
+                <a href="auth/signUp.html" class="btn btn-primary btn-lg">Create Your Account <i data-lucide="arrow-right"></i></a>
+                <a href="auth/signIn.html" class="btn btn-outline btn-lg">Sign In to Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="logo footer-logo">
+                    <div class="logo-mark sm">
+                        <img src="assets/images/KoloRise-Logo-001.png" alt="KoloRise logo">
+                    </div>
+                    <span class="logo-text">Kolo<span>Rise</span></span>
+                </div>
+                <p class="footer-tagline">Save today. Rise tomorrow.</p>
+                <p class="copyright">Copyright 2026 KoloRise. All rights reserved.</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#savings">Savings Goals</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#features">Features</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#story">Our Story</a></li>
+                    <li><a href="#founder">Founder</a></li>
+                    <li><a href="#hq">HQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/landing.js"></script>
+    <script type="module" src="js/icon-loader.js"></script>
+    <script type="module" src="js/motion.js"></script>
+    <script src="js/authState.js" type="module"></script>
+</body>
+</html>

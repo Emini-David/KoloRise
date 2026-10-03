@@ -1,0 +1,95 @@
+/* These rules place the create-account card in the middle of the screen. */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-bg);
+    padding: 40px 20px;
+}
+
+.auth-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid var(--gray-200);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--brand-deep);
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    border-color: var(--brand-green);
+    box-shadow: 0 0 0 3px rgba(15, 130, 92, 0.1);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--gray-500);
+}
+
+.auth-footer a {
+    color: var(--brand-green);
+    font-weight: 600;
+}
+
+.error-msg {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 16px;
+    display: none;
+}
+
+.error-msg.success-msg {
+    background: rgba(15, 130, 92, 0.1);
+    color: var(--brand-green);
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: .7;
+}
+
+@media (max-width: 480px) {
+    .auth-wrapper {
+        min-height: 100svh;
+        align-items: flex-start;
+        padding: 24px 14px max(24px, env(safe-area-inset-bottom));
+    }
+
+    .auth-card {
+        padding: 26px 22px;
+        border-radius: 16px;
+    }
+
+    .auth-card h2 { font-size: clamp(25px, 7vw, 30px); }
+    .error-msg { font-size: 13px; line-height: 1.5; }
+}

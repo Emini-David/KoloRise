@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Dashboard - KoloRise</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/motion.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+  <header class="dashboard-header">
+    <a href="index.html" class="logo" aria-label="KoloRise home">
+      <span class="logo-mark"><img src="assets/images/KoloRise-Logo-001.png" alt=""></span>
+      <span class="logo-text">Kolo<span>Rise</span></span>
+    </a>
+    <div class="dashboard-user">
+      <span class="welcome-label">Signed in as</span>
+      <span id="userEmail" class="user-email">Loading...</span>
+      <button id="signOutBtn" class="btn btn-outline" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <!-- JavaScript fills the IDs on this page with the signed-in user's data. -->
+  <main class="dashboard-main">
+    <div class="dashboard-heading">
+      <div><p class="eyebrow">YOUR KOLORISE SPACE</p><h1>Welcome, <span id="userName">there</span></h1><p>Here is an overview of your savings journey.</p></div>
+      <a class="btn btn-outline" href="index.html">Back to home</a>
+    </div>
+
+    <div id="dashboardError" class="dashboard-notice" role="status" hidden></div>
+
+    <section class="dashboard-summary" aria-label="Savings summary">
+      <article class="summary-card balance-card"><span class="summary-label">Tracked savings (demo)</span><strong id="savingsBalance">Loading...</strong><span class="summary-hint" id="balanceHint">Demo entries only. No money is transferred.</span></article>
+      <article class="summary-card"><span class="summary-label">Active goals</span><strong id="goalCount">-</strong><span class="summary-hint">Goals saved to your account</span></article>
+      <article class="summary-card"><span class="summary-label">Recent activity</span><strong id="transactionCount">-</strong><span class="summary-hint">Transactions on record</span></article>
+      <article class="summary-card"><span class="summary-label">Outstanding loan balance</span><strong id="loanBalance">-</strong><span class="summary-hint" id="loanBalanceHint">Tracked loan balances</span><button class="summary-action" id="trackLoanFromSummary" type="button">Track an existing loan</button></article>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="goalsTitle">
+      <div class="section-heading"><div><p class="eyebrow">PLAN YOUR PROGRESS</p><h2 id="goalsTitle">Your savings goals</h2></div><div class="section-actions"><button class="btn btn-outline" id="newDepositButton" type="button">Record demo deposit</button><button class="btn btn-primary" id="newGoalButton" type="button">Create a goal</button></div></div>
+      <form id="newGoalForm" class="goal-form" hidden>
+        <div class="goal-form-fields">
+          <label>Goal name<input id="newGoalName" name="name" type="text" maxlength="60" placeholder="For example, emergency fund" required></label>
+          <label>What are you saving for?<textarea id="newGoalDescription" name="description" maxlength="300" placeholder="Explain what you plan to use these savings for." required></textarea></label>
+          <label>Target amount (NGN)<input id="newGoalTarget" name="target" type="number" min="1" step="1" placeholder="500000" required></label>
+        </div>
+        <div class="goal-form-actions"><p id="goalFormMessage" role="status" hidden></p><button class="btn btn-primary" id="saveGoalButton" type="submit">Save goal</button><button class="btn btn-outline" id="cancelGoalButton" type="button">Cancel</button></div>
+      </form>
+      <form id="depositForm" class="goal-form" hidden>
+        <p class="demo-note">Demo deposit: this records savings in the app but does not transfer real money.</p>
+        <div class="goal-form-fields">
+          <label>Savings goal<select id="depositGoal" name="goalId" required><option value="">Choose a goal</option></select></label>
+          <label>Amount (NGN)<input id="depositAmount" name="amount" type="number" min="1" step="1" placeholder="10000" required></label>
+        </div>
+        <div class="goal-form-actions"><p id="depositFormMessage" role="status" hidden></p><button class="btn btn-primary" id="saveDepositButton" type="submit">Record deposit</button><button class="btn btn-outline" id="cancelDepositButton" type="button">Cancel</button></div>
+      </form>
+      <div id="goalsList" class="dashboard-list"><p class="empty-state">Loading your goals...</p></div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="loanApplicationsTitle">
+      <div class="section-heading"><div><p class="eyebrow">PRACTICE THE LOAN PROCESS</p><h2 id="loanApplicationsTitle">Loan applications</h2></div><button class="btn btn-primary" id="newLoanApplicationButton" type="button">Apply for a demo loan</button></div>
+      <p class="demo-note">Demo only. You choose a savings goal with at least half the requested amount saved. The review buttons simulate a lender decision; no money is sent.</p>
+      <form id="loanApplicationForm" class="goal-form" hidden>
+        <div class="goal-form-fields">
+          <label>Amount requested (NGN)<input id="applicationAmount" name="amount" type="number" min="1" step="1" placeholder="100000" required></label>
+          <label>Repayment period<select id="applicationTerm" name="termMonths" required><option value="">Choose months</option><option value="3">3 months</option><option value="6">6 months</option><option value="9">9 months</option><option value="12">12 months</option></select></label>
+          <label>Savings goal used for eligibility<select id="applicationGoal" name="goalId" required><option value="">Choose a goal</option></select></label>
+          <label>What is this loan for?<textarea id="applicationPurpose" name="purpose" maxlength="500" placeholder="Describe what the loan will help you pay for." required></textarea></label>
+        </div>
+        <p id="eligibilityMessage" class="form-help" role="status">Choose a savings goal and enter an amount to check the 50% savings requirement.</p>
+        <div class="goal-form-actions"><p id="applicationFormMessage" role="status" hidden></p><button class="btn btn-primary" id="submitApplicationButton" type="submit">Submit application</button><button class="btn btn-outline" id="cancelApplicationButton" type="button">Cancel</button></div>
+      </form>
+      <div id="loanApplicationsList" class="dashboard-list"><p class="empty-state">Loading your applications...</p></div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="loansTitle">
+      <div class="section-heading"><div><p class="eyebrow">STAY ON TOP OF REPAYMENTS</p><h2 id="loansTitle">Loan tracker</h2></div><button class="btn btn-primary" id="newLoanButton" type="button">Track a loan</button></div>
+      <form id="newLoanForm" class="goal-form" hidden>
+        <p class="demo-note">Track an existing loan or debt. This does not apply for or issue a loan. The app records when you add the loan and when you record each repayment.</p>
+        <div class="goal-form-fields">
+          <label>Lender or loan name<input id="loanName" name="name" type="text" maxlength="60" placeholder="For example, Education loan" required></label>
+          <label>Current outstanding balance (NGN)<input id="loanStartingAmount" name="amount" type="number" min="1" step="1" placeholder="250000" required></label>
+          <label>Due date (optional)<input id="loanDueDate" name="dueDate" type="date"></label>
+        </div>
+        <div class="goal-form-actions"><p id="loanFormMessage" role="status" hidden></p><button class="btn btn-primary" id="saveLoanButton" type="submit">Save loan</button><button class="btn btn-outline" id="cancelLoanButton" type="button">Cancel</button></div>
+      </form>
+      <form id="repaymentForm" class="goal-form" hidden>
+        <p class="demo-note">Demo repayment: this updates your tracker but does not move real money.</p>
+        <p id="repaymentLoanName" class="row-title"></p>
+        <label>Repayment amount (NGN)<input id="repaymentAmount" name="amount" type="number" min="1" step="1" placeholder="10000" required></label>
+        <div class="goal-form-actions"><p id="repaymentFormMessage" role="status" hidden></p><button class="btn btn-primary" id="saveRepaymentButton" type="submit">Record repayment</button><button class="btn btn-outline" id="cancelRepaymentButton" type="button">Cancel</button></div>
+      </form>
+      <div id="loansList" class="dashboard-list"><p class="empty-state">Loading your loans...</p></div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="transactionsTitle">
+      <div class="section-heading"><div><p class="eyebrow">YOUR LATEST ACTIVITY</p><h2 id="transactionsTitle">Recent transactions</h2></div></div>
+      <div id="transactionsList" class="dashboard-list"><p class="empty-state">Loading your transactions...</p></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <a class="logo footer-logo" href="index.html" aria-label="KoloRise home">
+          <span class="logo-mark sm"><img src="assets/images/KoloRise-Logo-001.png" alt=""></span>
+          <span class="logo-text">Kolo<span>Rise</span></span>
+        </a>
+        <p class="footer-tagline">Save today. Rise tomorrow.</p>
+        <p class="copyright">Copyright 2026 KoloRise. All rights reserved.</p>
+      </div>
+
+      <nav class="footer-col" aria-label="Product links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="index.html#savings">Savings Goals</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#features">Features</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Company links">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html#story">Our Story</a></li>
+          <li><a href="index.html#founder">Founder</a></li>
+          <li><a href="index.html#hq">HQ</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Legal links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="index.html#">Terms &amp; Conditions</a></li>
+          <li><a href="index.html#">Privacy Policy</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/authState.js"></script>
+  <script type="module" src="js/motion.js"></script>
+</body>
+</html>

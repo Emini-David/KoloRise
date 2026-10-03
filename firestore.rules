@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // A signed-in person can only use their own private folder.
+    function signedInAs(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function userGoalPath(uid, goalId) {
+      return /databases/$(database)/documents/users/$(uid)/goals/$(goalId);
+    }
+
+    function userLoanPath(uid, loanId) {
+      return /databases/$(database)/documents/users/$(uid)/loans/$(loanId);
+    }
+
+    function userApplicationPath(uid, applicationId) {
+      return /databases/$(database)/documents/users/$(uid)/loanApplications/$(applicationId);
+    }
+
+    match /users/{uid} {
+      allow read: if signedInAs(uid);
+      allow create: if signedInAs(uid)
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'createdAt', 'updatedAt'])
+        && request.resource.data.fullName is string
+        && request.resource.data.email is string;
+      allow update: if signedInAs(uid)
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'createdAt', 'updatedAt'])
+        && request.resource.data.get('balance', null) == resource.data.get('balance', null);
+      allow delete: if false;
+
+      match /goals/{goalId} {
+        allow read: if signedInAs(uid);
+        // A goal explains what the user is saving toward.
+        allow create: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['name', 'description', 'targetAmount', 'savedAmount', 'status', 'createdAt'])
+          && request.resource.data.keys().hasAll(['name', 'description', 'targetAmount', 'savedAmount', 'status', 'createdAt'])
+          && request.resource.data.name is string
+          && request.resource.data.description is string
+          && request.resource.data.targetAmount is number
+          && request.resource.data.targetAmount > 0
+          && request.resource.data.savedAmount == 0
+          && request.resource.data.status == 'active'
+          && request.resource.data.createdAt is timestamp;
+        // Savings can only increase through a matching demo deposit.
+        allow update: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['name', 'description', 'targetAmount', 'savedAmount', 'status', 'createdAt', 'updatedAt'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['savedAmount', 'updatedAt'])
+          && request.resource.data.savedAmount is number
+          && request.resource.data.savedAmount >= resource.data.savedAmount
+          && request.resource.data.savedAmount <= request.resource.data.targetAmount
+          && request.resource.data.updatedAt is timestamp;
+        allow delete: if false;
+      }
+
+      match /loanApplications/{applicationId} {
+        allow read: if signedInAs(uid);
+        // The rules check the goal's real saved amount. A browser cannot bypass the 50% rule.
+        allow create: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['requestedAmount', 'purpose', 'termMonths', 'goalId', 'goalName', 'savingsAtApplication', 'status', 'createdAt'])
+          && request.resource.data.keys().hasAll(['requestedAmount', 'purpose', 'termMonths', 'goalId', 'goalName', 'savingsAtApplication', 'status', 'createdAt'])
+          && request.resource.data.requestedAmount is number
+          && request.resource.data.requestedAmount > 0
+          && request.resource.data.purpose is string
+          && request.resource.data.purpose.size() >= 8
+          && request.resource.data.termMonths in [3, 6, 9, 12]
+          && request.resource.data.goalId is string
+          && request.resource.data.goalName == get(userGoalPath(uid, request.resource.data.goalId)).data.name
+          && request.resource.data.savingsAtApplication == get(userGoalPath(uid, request.resource.data.goalId)).data.savedAmount
+          && request.resource.data.savingsAtApplication >= request.resource.data.requestedAmount / 2
+          && request.resource.data.status == 'pending'
+          && request.resource.data.createdAt is timestamp;
+        // Demo users may simulate a lender decision. A real app must do this in trusted server code.
+        allow update: if signedInAs(uid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'loanId'])
+          && request.resource.data.updatedAt is timestamp
+          && ((resource.data.status == 'pending'
+              && request.resource.data.status in ['approved', 'rejected']
+              && !request.resource.data.keys().hasAny(['loanId']))
+            || (resource.data.status == 'approved'
+              && request.resource.data.status == 'disbursed'
+              && request.resource.data.loanId is string
+              && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.applicationId == applicationId
+              && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.startingAmount == resource.data.requestedAmount));
+        allow delete: if false;
+      }
+
+      match /loans/{loanId} {
+        allow read: if signedInAs(uid);
+        // One form tracks an existing loan; the application path records demo payouts.
+        allow create: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['name', 'startingAmount', 'remainingAmount', 'dueDate', 'status', 'createdAt', 'applicationId'])
+          && request.resource.data.keys().hasAll(['name', 'startingAmount', 'remainingAmount', 'dueDate', 'status', 'createdAt'])
+          && request.resource.data.name is string
+          && request.resource.data.startingAmount is number
+          && request.resource.data.startingAmount > 0
+          && request.resource.data.remainingAmount == request.resource.data.startingAmount
+          && request.resource.data.dueDate is string
+          && request.resource.data.status == 'active'
+          && request.resource.data.createdAt is timestamp
+          && (!request.resource.data.keys().hasAny(['applicationId'])
+            || (request.resource.data.applicationId is string
+              && getAfter(userApplicationPath(uid, request.resource.data.applicationId)).data.status == 'disbursed'
+              && getAfter(userApplicationPath(uid, request.resource.data.applicationId)).data.loanId == loanId
+              && getAfter(userApplicationPath(uid, request.resource.data.applicationId)).data.requestedAmount == request.resource.data.startingAmount));
+        allow update: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['name', 'startingAmount', 'remainingAmount', 'dueDate', 'status', 'createdAt', 'updatedAt', 'applicationId'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['remainingAmount', 'status', 'updatedAt'])
+          && request.resource.data.remainingAmount is number
+          && request.resource.data.remainingAmount >= 0
+          && request.resource.data.remainingAmount <= resource.data.remainingAmount
+          && request.resource.data.updatedAt is timestamp
+          && ((request.resource.data.remainingAmount == 0 && request.resource.data.status == 'paid')
+            || (request.resource.data.remainingAmount > 0 && request.resource.data.status == 'active'));
+        allow delete: if false;
+      }
+
+      match /transactions/{transactionId} {
+        allow read: if signedInAs(uid);
+        // A deposit or repayment must update its goal or loan in the same atomic batch.
+        allow create: if signedInAs(uid)
+          && request.resource.data.demo == true
+          && request.resource.data.amount is number
+          && request.resource.data.amount > 0
+          && request.resource.data.createdAt is timestamp
+          && ((request.resource.data.type == 'deposit'
+              && request.resource.data.keys().hasOnly(['type', 'amount', 'goalId', 'goalName', 'demo', 'createdAt'])
+              && request.resource.data.keys().hasAll(['type', 'amount', 'goalId', 'goalName', 'demo', 'createdAt'])
+              && request.resource.data.goalId is string
+              && request.resource.data.goalName is string
+              && getAfter(userGoalPath(uid, request.resource.data.goalId)).data.savedAmount
+                == get(userGoalPath(uid, request.resource.data.goalId)).data.savedAmount + request.resource.data.amount
+              && getAfter(userGoalPath(uid, request.resource.data.goalId)).data.savedAmount
+                <= getAfter(userGoalPath(uid, request.resource.data.goalId)).data.targetAmount)
+            || (request.resource.data.type == 'loan_repayment'
+              && request.resource.data.keys().hasOnly(['type', 'amount', 'loanId', 'loanName', 'demo', 'createdAt'])
+              && request.resource.data.keys().hasAll(['type', 'amount', 'loanId', 'loanName', 'demo', 'createdAt'])
+              && request.resource.data.loanId is string
+              && request.resource.data.loanName is string
+              && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.remainingAmount
+                == get(userLoanPath(uid, request.resource.data.loanId)).data.remainingAmount - request.resource.data.amount)
+            || (request.resource.data.type == 'loan_disbursement'
+              && request.resource.data.keys().hasOnly(['type', 'amount', 'loanId', 'loanName', 'demo', 'createdAt'])
+              && request.resource.data.keys().hasAll(['type', 'amount', 'loanId', 'loanName', 'demo', 'createdAt'])
+              && request.resource.data.loanId is string
+              && request.resource.data.loanName is string
+              && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.startingAmount == request.resource.data.amount
+              && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.applicationId is string));
+        allow update, delete: if false;
+      }
+    }
+  }
+}

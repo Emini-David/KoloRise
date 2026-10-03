@@ -1,0 +1,30 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+.firebase/
+.runtimeconfig.json
+serviceAccount*.json
+*service-account*.json
+*-firebase-adminsdk-*.json
+*.pem
+*.p12
+*.key
+
+# Firebase CLI logs
+firebase-debug.log
+firebase-debug.*.log
+
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+
+# Local editor and operating system files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
