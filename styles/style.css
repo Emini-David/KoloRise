@@ -626,13 +626,6 @@ h6 {
     gap: 10px;
 }
 
-.dash-preview-note {
-    margin: 12px 0 0;
-    color: var(--gray-500);
-    font-size: 10px;
-    text-align: center;
-}
-
 .action-chip {
     display: flex;
     align-items: center;
