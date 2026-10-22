@@ -16,6 +16,18 @@ const errorBox = document.querySelector("#errorBox");
 const googleButtons = document.querySelectorAll("[data-google-auth]");
 const AUTH_PROGRESS_KEY = "koloriseAuthInProgress";
 
+document.querySelectorAll("[data-password-toggle]").forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    const input = document.getElementById(toggle.dataset.passwordToggle);
+    if (!input) return;
+
+    const isVisible = input.type === "text";
+    input.type = isVisible ? "password" : "text";
+    toggle.setAttribute("aria-pressed", String(!isVisible));
+    toggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+  });
+});
+
 function showMessage(message, isError = true) {
   if (!errorBox) return;
   errorBox.textContent = message;
