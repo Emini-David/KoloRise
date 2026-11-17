@@ -139,14 +139,14 @@ async function typeResponse(text, action) {
   const avatar = document.createElement("span");
   avatar.className = "assistant-typing-avatar";
   avatar.textContent = "K";
-  const bubble = document.createElement("span");
-  bubble.className = "assistant-typing-bubble";
+  const typingBubble = document.createElement("span");
+  typingBubble.className = "assistant-typing-bubble";
   for (let index = 0; index < 3; index += 1) {
     const dot = document.createElement("span");
     dot.className = "assistant-typing-dot";
-    bubble.append(dot);
+    typingBubble.append(dot);
   }
-  typing.append(avatar, bubble);
+  typing.append(avatar, typingBubble);
   messages.append(typing);
   announcement.textContent = "A reply is being prepared.";
   messages.scrollTop = messages.scrollHeight;
