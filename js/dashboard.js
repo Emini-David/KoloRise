@@ -137,16 +137,11 @@ function renderApplications() {
     main.append(make("h3", "row-title", `${money.format(Number(data.requestedAmount) || 0)} request · ${data.purpose}`));
     main.append(make("p", "row-meta", `Goal: ${data.goalName} · Savings at request: ${money.format(Number(data.savingsAtApplication) || 0)} · ${data.termMonths} month(s)`));
     main.append(make("p", "row-meta", `Approx. ${money.format(Math.ceil(data.requestedAmount / data.termMonths))} per month in this 0% interest demo.`));
+    if (data.reviewNote) main.append(make("p", "row-meta", `Staff review note: ${data.reviewNote}`));
     const side = make("div", "list-row-side");
     side.append(make("span", "badge-status", data.status));
     if (data.status === "pending") {
-      const approve = make("button", "btn btn-outline", "Simulate approval");
-      approve.type = "button";
-      approve.addEventListener("click", () => decideApplication(id, "approved"));
-      const reject = make("button", "btn btn-outline", "Simulate decline");
-      reject.type = "button";
-      reject.addEventListener("click", () => decideApplication(id, "rejected"));
-      side.append(approve, reject);
+      side.append(make("span", "row-meta", "Awaiting staff review"));
     } else if (data.status === "approved") {
       const payout = make("button", "btn btn-primary", "Record demo payout");
       payout.type = "button";
@@ -156,22 +151,6 @@ function renderApplications() {
     row.append(main, side);
     list.append(row);
   });
-}
-
-// This is a pretend review for the demo. A real lender decision belongs on a trusted server.
-async function decideApplication(applicationId, decision) {
-  const app = applications.find((item) => item.id === applicationId);
-  if (!app || app.data.status !== "pending") return;
-  showError("");
-  try {
-    const batch = writeBatch(db);
-    batch.update(doc(db, "users", activeUser.uid, "loanApplications", applicationId), { status: decision, updatedAt: serverTimestamp() });
-    await batch.commit();
-    await refresh();
-  } catch (error) {
-    console.error("Could not update demo application:", error);
-    showError("We could not update the demo application. Check your connection and Firestore rules.");
-  }
 }
 
 // Write the loan, application status, and incoming activity together so they cannot get out of sync.

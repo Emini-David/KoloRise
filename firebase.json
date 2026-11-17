@@ -6,12 +6,18 @@
       ".firebaserc",
       "**/.*",
       "**/node_modules/**",
+      "functions/**",
       "firebase-debug.log",
       "firestore.rules",
       "README.md"
     ]
   },
+  "functions": {
+    "source": "functions",
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+  },
   "firestore": {
-    "rules": "firestore.rules"
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }

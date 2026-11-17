@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/dashboard.css">
   <link rel="stylesheet" href="styles/motion.css">
+  <link rel="stylesheet" href="styles/assistant.css">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-page">
@@ -62,7 +63,7 @@
 
     <section class="dashboard-section" aria-labelledby="loanApplicationsTitle">
       <div class="section-heading"><div><p class="eyebrow">PRACTICE THE LOAN PROCESS</p><h2 id="loanApplicationsTitle">Loan applications</h2></div><button class="btn btn-primary" id="newLoanApplicationButton" type="button">Apply for a demo loan</button></div>
-      <p class="demo-note">Demo only. You choose a savings goal with at least half the requested amount saved. The review buttons simulate a lender decision; no money is sent.</p>
+      <p class="demo-note">Demo only. You choose a savings goal with at least half the requested amount saved. Pending applications wait for staff review. An approved request can be recorded as a demo payout; no money is sent.</p>
       <form id="loanApplicationForm" class="goal-form" hidden>
         <div class="goal-form-fields">
           <label>Amount requested (NGN)<input id="applicationAmount" name="amount" type="number" min="1" step="1" placeholder="100000" required></label>
@@ -144,5 +145,6 @@
   <script type="module" src="js/dashboard.js"></script>
   <script type="module" src="js/authState.js"></script>
   <script type="module" src="js/motion.js"></script>
+  <script type="module" src="js/assistant.js"></script>
 </body>
 </html>

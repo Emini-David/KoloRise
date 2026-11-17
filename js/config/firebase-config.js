@@ -18,6 +18,6 @@ if (unfinished.length) {
   console.warn(`Firebase is not fully configured. Paste these values into js/config/firebase-config.js: ${unfinished.map(([key]) => key).join(", ")}.`);
 }
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

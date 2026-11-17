@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Admin Console - KoloRise</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <a href="index.html" class="logo" aria-label="KoloRise home">
+      <span class="logo-mark"><img src="assets/images/KoloRise-Logo-001.png" alt=""></span>
+      <span class="logo-text">Kolo<span>Rise</span></span>
+      <span class="admin-tag">STAFF</span>
+    </a>
+    <div class="admin-header-actions"><span id="staffIdentity">Checking access…</span><button id="signOutButton" class="btn btn-outline" type="button">Sign out</button></div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-title"><div><p class="eyebrow">KOLORISE OPERATIONS</p><h1>Admin console</h1><p>Internal tools for the KoloRise demo. All amounts are simulated.</p></div><span id="staffRole" class="role-pill">Staff</span></div>
+    <div id="adminNotice" class="admin-notice" role="status" aria-live="polite" hidden></div>
+
+    <section class="admin-section" aria-labelledby="overviewTitle">
+      <div class="section-title"><div><p class="eyebrow">PLATFORM SNAPSHOT</p><h2 id="overviewTitle">Overview</h2></div><button id="refreshButton" class="btn btn-outline" type="button">Refresh data</button></div>
+      <div class="admin-metrics" id="metricsGrid" aria-live="polite"><p class="empty-state">Loading overview…</p></div>
+      <p class="demo-disclaimer">These figures describe demo records only. KoloRise does not hold or transfer money.</p>
+    </section>
+
+    <section class="admin-section" aria-labelledby="applicationsTitle">
+      <div class="section-title"><div><p class="eyebrow">STAFF WORK QUEUE</p><h2 id="applicationsTitle">Pending loan applications</h2></div></div>
+      <div id="applicationsList" class="admin-card-list"><p class="empty-state">Loading applications…</p></div>
+    </section>
+
+    <section class="admin-section" aria-labelledby="usersTitle">
+      <div class="section-title"><div><p class="eyebrow">ACCOUNT LOOKUP</p><h2 id="usersTitle">Users</h2></div></div>
+      <label class="search-label" for="userSearch">Search loaded users by name, email, or UID</label>
+      <input id="userSearch" class="admin-search" type="search" placeholder="Search users" autocomplete="off">
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>User ID</th><th>Joined</th><th>Profile</th></tr></thead><tbody id="usersTable"><tr><td colspan="5">Loading users…</td></tr></tbody></table></div>
+      <p class="table-footnote" id="usersFootnote"></p>
+      <div id="userSummary" class="user-summary" hidden></div>
+    </section>
+
+    <section class="admin-section" aria-labelledby="auditTitle">
+      <div class="section-title"><div><p class="eyebrow">ACCOUNTABILITY</p><h2 id="auditTitle">Recent admin actions</h2></div></div>
+      <div id="auditList" class="admin-card-list"><p class="empty-state">Loading audit history…</p></div>
+    </section>
+  </main>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
