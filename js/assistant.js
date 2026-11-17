@@ -30,8 +30,8 @@ const answers = [
     text: "Hello! I can explain KoloRise, help you set a savings goal, walk you through demo deposits and loan applications, or answer questions about the founder. What would you like to do?"
   },
   {
-    match: /\b(who is|tell me about|about)\b.*\b(ogunfadewo|david|founder|ceo|owner)\b|\b(ogunfadewo david ayodele|david ayodele)\b/i,
-    text: "Ogunfadewo David Ayodele is the owner and CEO you mentioned; the KoloRise site introduces him as David Ayodele, Founder & CEO. The site says the idea grew from a desire to make saving more structured and relevant to a digital generation. You can read the founder story on the home page.",
+    match: /\b(who is|tell me about|about)\b.*\b(ogunfadewo|david|founder|ceo|owner|man behind|person behind|mind behind|creator)\b|\b(who|name of)\b.*\b(behind|founded|started|created|made)\b.*\b(kolorise|kolo rise|innovation|project)\b|\b(ogunfadewo david ayodele|david ayodele)\b/i,
+    text: "Ogunfadewo David Ayodele is the founder and CEO of KoloRise. The website introduces him as David Ayodele. KoloRise grew from his idea to bring the familiar kóló savings tradition into the digital world. You can read his story on the home page.",
     action: ["Read the founder story", "../index.html#founder"]
   },
   {
