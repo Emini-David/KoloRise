@@ -29,7 +29,7 @@ function cleanUser(snapshot) {
   const data = snapshot.data();
   return {
     uid: snapshot.id,
-    fullName: data.fullName || "KoloRise user",
+    fullName: data.firstName || data.fullName?.trim().split(/\s+/)[0] || "KoloRise user",
     email: data.email || "",
     createdAt: timestampMillis(data.createdAt)
   };
@@ -104,7 +104,7 @@ exports.listPendingApplications = onCall({ region: REGION }, async (request) => 
     return {
       id: application.id,
       uid: userRef.id,
-      fullName: userSnapshot.exists ? userSnapshot.get("fullName") || "KoloRise user" : "Unknown user",
+      fullName: userSnapshot.exists ? userSnapshot.get("firstName") || userSnapshot.get("fullName")?.trim().split(/\s+/)[0] || "KoloRise user" : "Unknown user",
       email: userSnapshot.exists ? userSnapshot.get("email") || "" : "",
       requestedAmount: data.requestedAmount,
       purpose: data.purpose,

@@ -39,10 +39,10 @@
 
     <section id="profileSection" class="dashboard-section account-panel" aria-labelledby="profileTitle" hidden>
       <div class="section-heading"><div><p class="eyebrow">YOUR ACCOUNT</p><h2 id="profileTitle">Profile</h2></div><button id="closeProfileButton" class="btn btn-outline" type="button">Close</button></div>
-      <p class="demo-note">Update your display name or restore it to the name from your sign-in account. Restoring your profile does not delete savings, loans, or activity.</p>
+      <p class="demo-note">Your account is saved under a secure user ID. Update your first name or restore it to your sign-in account default. Restoring your profile does not delete savings, loans, or activity.</p>
       <form id="profileForm" class="goal-form">
         <div class="goal-form-fields">
-          <label>Full name<input id="profileFullName" name="fullName" type="text" maxlength="80" autocomplete="name" required></label>
+          <label>First name<input id="profileFirstName" name="firstName" type="text" maxlength="40" autocomplete="given-name" required></label>
           <label>Email address<input id="profileEmail" name="email" type="email" readonly aria-describedby="profileEmailHelp"><small id="profileEmailHelp">Your sign-in email is managed by your authentication provider.</small></label>
         </div>
         <div class="goal-form-actions"><p id="profileMessage" role="status" hidden></p><button class="btn btn-primary" id="saveProfileButton" type="submit">Save profile</button><button class="btn btn-outline" id="resetProfileButton" type="button">Restore defaults</button></div>

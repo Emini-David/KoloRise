@@ -332,12 +332,13 @@ async function loadDashboard(user) {
   showError("");
   $("#userEmail").textContent = user.email || "Google account";
   const profileSnap = await getDoc(doc(db, "users", user.uid));
-  const fallbackName = user.displayName || user.email?.split("@")[0] || "KoloRise User";
-  originalProfileName = fallbackName.trim();
-  const name = profileSnap.exists() ? profileSnap.data().fullName : originalProfileName;
-  $("#profileFullName").value = name || originalProfileName;
+  const fallbackName = user.displayName?.trim().split(/\s+/)[0] || "KoloRise User";
+  originalProfileName = fallbackName;
+  const profileData = profileSnap.exists() ? profileSnap.data() : {};
+  const name = profileData.firstName || profileData.fullName?.trim().split(/\s+/)[0] || originalProfileName;
+  $("#profileFirstName").value = name;
   $("#profileEmail").value = user.email || "";
-  $("#userName").textContent = (name || user.email?.split("@")[0] || "there").split(" ")[0];
+  $("#userName").textContent = name;
 
   const userPath = (name) => collection(db, "users", user.uid, name);
   const [goalSnap, loanSnap, transactionSnap, applicationSnap] = await Promise.all([
@@ -377,7 +378,7 @@ $("#openProfileButton").addEventListener("click", () => {
   $("#notificationsSection").hidden = true;
   $("#toggleNotificationsButton").setAttribute("aria-expanded", "false");
   $("#profileSection").hidden = !$("#profileSection").hidden;
-  if (!$("#profileSection").hidden) $("#profileFullName").focus();
+  if (!$("#profileSection").hidden) $("#profileFirstName").focus();
 });
 $("#closeProfileButton").addEventListener("click", () => { $("#profileSection").hidden = true; });
 $("#toggleNotificationsButton").addEventListener("click", (event) => {
@@ -394,16 +395,17 @@ $("#markAllNotificationsReadButton").addEventListener("click", markAllNotificati
 
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const fullName = $("#profileFullName").value.trim();
+  const firstName = $("#profileFirstName").value.trim().split(/\s+/)[0];
   const button = $("#saveProfileButton");
-  if (fullName.length < 2) return formMessage("#profileMessage", "Enter a name with at least 2 characters.");
+  if (firstName.length < 2) return formMessage("#profileMessage", "Enter a first name with at least 2 characters.");
   setBusy(button, true, "Saving...");
   try {
     const batch = writeBatch(db);
-    batch.update(doc(db, "users", activeUser.uid), { fullName, updatedAt: serverTimestamp() });
+    batch.update(doc(db, "users", activeUser.uid), { firstName, updatedAt: serverTimestamp() });
     stageNotification(batch, "profile_updated", "Profile updated", "Your display name was updated.");
     await batch.commit();
-    $("#userName").textContent = fullName.split(" ")[0];
+    $("#profileFirstName").value = firstName;
+    $("#userName").textContent = firstName;
     formMessage("#profileMessage", "Your profile has been updated.");
   } catch (error) {
     console.error("Could not update profile:", error);
@@ -418,11 +420,11 @@ $("#resetProfileButton").addEventListener("click", async (event) => {
   setBusy(button, true, "Restoring...");
   try {
     const batch = writeBatch(db);
-    batch.update(doc(db, "users", activeUser.uid), { fullName: originalProfileName, updatedAt: serverTimestamp() });
+    batch.update(doc(db, "users", activeUser.uid), { firstName: originalProfileName, updatedAt: serverTimestamp() });
     stageNotification(batch, "profile_reset", "Profile restored", "Your display name was restored to its sign-in account default.");
     await batch.commit();
-    $("#profileFullName").value = originalProfileName;
-    $("#userName").textContent = originalProfileName.split(" ")[0];
+    $("#profileFirstName").value = originalProfileName;
+    $("#userName").textContent = originalProfileName;
     formMessage("#profileMessage", "Your display name was restored. Your savings and activity are unchanged.");
   } catch (error) {
     console.error("Could not restore profile:", error);

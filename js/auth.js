@@ -50,14 +50,14 @@ function friendlyError(error) {
   return messages[error?.code] || "Something went wrong. Check your connection and Firebase setup, then try again.";
 }
 
-async function saveProfile(user, fullName = "") {
+async function saveProfile(user, firstName = "") {
   const profileRef = doc(db, "users", user.uid);
   const profile = await getDoc(profileRef);
   if (profile.exists()) return;
 
-  const name = (fullName || user.displayName || "KoloRise User").trim();
+  const name = (firstName || user.displayName?.trim().split(/\s+/)[0] || "KoloRise User").trim().split(/\s+/)[0];
   await setDoc(profileRef, {
-    fullName: name,
+    firstName: name,
     email: user.email || "",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
@@ -81,20 +81,20 @@ if (signUpForm) {
     event.preventDefault();
     showMessage("");
     const button = signUpForm.querySelector('[type="submit"]');
-    const fullName = document.querySelector("#fullName").value.trim();
+    const firstName = document.querySelector("#firstName").value.trim().split(/\s+/)[0];
     const email = document.querySelector("#email").value.trim();
     const password = document.querySelector("#password").value;
     const confirmPassword = document.querySelector("#confirmPassword").value;
 
-    if (fullName.length < 2) return showMessage("Please enter your name (at least 2 letters).");
+    if (firstName.length < 2) return showMessage("Please enter your first name (at least 2 letters).");
     if (password !== confirmPassword) return showMessage("The two passwords do not match. Please check them.");
 
     busy(button, true, "Creating account...");
     sessionStorage.setItem(AUTH_PROGRESS_KEY, "true");
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(result.user, { displayName: fullName });
-      await saveProfile(result.user, fullName);
+      await updateProfile(result.user, { displayName: firstName });
+      await saveProfile(result.user, firstName);
       sessionStorage.removeItem(AUTH_PROGRESS_KEY);
       window.location.replace(ROUTES.dashboard);
     } catch (error) {

@@ -56,7 +56,7 @@ The admin endpoints verify the custom claim on every request. Application decisi
 
 ## Profile and notifications
 
-Users can edit their display name in the dashboard profile panel or restore it to the name from their sign-in account. The authentication email is read-only in the dashboard. The notification center shows recent profile, savings, loan-tracking, and staff-review updates, with unread counts and read controls.
+User profile documents are keyed by Firebase Auth UID and store a first name for greetings; email remains a separate sign-in/contact field. Users can edit their first name in the dashboard profile panel or restore it to the name from their sign-in account. The notification center shows recent profile, savings, loan-tracking, and staff-review updates, with unread counts and read controls.
 
 ## Data and security
 
