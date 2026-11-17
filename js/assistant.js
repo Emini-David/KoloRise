@@ -35,7 +35,7 @@ const answers = [
     action: ["Read the founder story", "../index.html#founder"]
   },
   {
-    match: /\b(what is|what's|meaning|origin|culture|traditional|yoruba)\b.*\b(kolo|kolorise)\b|\b(kolo|kolorise)\b.*\b(mean|origin|culture|traditional|yoruba)\b/i,
+    match: /\b(meaning|origin|culture|traditional|yoruba)\b.*\b(kolo|kolorise)\b|\b(kolo|kolorise)\b.*\b(mean|origin|culture|traditional|yoruba)\b|\b(what is|what's)\b.*\bkolo\b/i,
     text: "In the KoloRise story, kóló refers to a traditional handmade money box or piggy bank, especially in Yoruba communities. It stands for discipline, patience, and consistency. “Rise” represents progress toward meaningful goals. The name joins that saving tradition with the idea of growth.",
     action: ["Read the KoloRise story", "../index.html#story"]
   },
@@ -119,6 +119,7 @@ function addMessage(text, isUser = false, action) {
     messages.append(link);
   }
   messages.scrollTop = messages.scrollHeight;
+  return bubble;
 }
 
 function respond(question) {
@@ -186,6 +187,9 @@ async function ask(question) {
   suggestions.forEach((button) => { button.disabled = true; });
   try {
     await respond(question);
+  } catch (error) {
+    console.error("KoloRise chatbot response failed:", error);
+    addMessage("Sorry, something went wrong while preparing my reply. Please try again.");
   } finally {
     sendButton.disabled = false;
     input.disabled = false;
