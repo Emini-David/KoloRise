@@ -31,7 +31,7 @@ const answers = [
   },
   {
     match: /\b(who is|tell me about|about)\b.*\b(ogunfadewo|david|founder|ceo|owner|man behind|person behind|mind behind|creator)\b|\b(who|name of)\b.*\b(behind|founded|started|created|made)\b.*\b(kolorise|kolo rise|innovation|project)\b|\b(ogunfadewo david ayodele|david ayodele)\b/i,
-    text: "Ogunfadewo David Ayodele is the founder and CEO of KoloRise. The website introduces him as David Ayodele. KoloRise grew from his idea to bring the familiar kóló savings tradition into the digital world. You can read his story on the home page.",
+    text: "Ogunfadewo David Ayodele is the founder, CEO, and CTO of KoloRise. The website introduces him as David Ayodele. KoloRise grew from his idea to bring the familiar kóló savings tradition into the digital world. You can read his story on the home page.",
     action: ["Read the founder story", "../index.html#founder"]
   },
   {
