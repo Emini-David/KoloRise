@@ -1,8 +1,8 @@
 import { auth, db } from "./config/firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
-  collection, doc, getDoc, getDocs, orderBy, query,
-  serverTimestamp, writeBatch
+  collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query,
+  serverTimestamp, updateDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { ROUTES } from "./routes.js";
 
@@ -13,6 +13,8 @@ let activeUser = null;
 let goals = [];
 let loans = [];
 let applications = [];
+let stopWatchingNotifications = null;
+let originalProfileName = "";
 
 function showError(message) {
   errorBox.textContent = message;
@@ -46,6 +48,91 @@ function formMessage(id, message) {
   const node = $(id);
   node.textContent = message;
   node.hidden = !message;
+}
+
+function stageNotification(batch, type, title, message) {
+  const notificationRef = doc(collection(db, "users", activeUser.uid, "notifications"));
+  batch.set(notificationRef, { type, title, message, read: false, createdAt: serverTimestamp() });
+}
+
+function formatNotificationDate(timestamp) {
+  const date = timestamp?.toDate?.();
+  return date ? new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short" }).format(date) : "Just now";
+}
+
+function renderNotifications(snapshot) {
+  const list = $("#notificationsList");
+  const notifications = snapshot.docs.map((item) => ({ id: item.id, data: item.data() }));
+  const unreadCount = notifications.filter(({ data }) => !data.read).length;
+  const badge = $("#unreadNotificationCount");
+  badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+  badge.hidden = unreadCount === 0;
+  $("#markAllNotificationsReadButton").disabled = unreadCount === 0;
+  list.replaceChildren();
+  if (!notifications.length) {
+    list.append(make("p", "empty-state", "You’re all caught up. New account updates will appear here."));
+    return;
+  }
+  notifications.forEach(({ id, data }) => {
+    const row = make("article", "notification-row" + (data.read ? "" : " is-unread"));
+    const copy = make("div", "notification-copy");
+    copy.append(make("h3", "", data.title || "KoloRise update"), make("p", "", data.message || ""));
+    const time = make("time", "", formatNotificationDate(data.createdAt));
+    if (data.createdAt?.toDate) time.dateTime = data.createdAt.toDate().toISOString();
+    copy.append(time);
+    row.append(copy);
+    if (!data.read) {
+      const markRead = make("button", "btn btn-outline", "Mark read");
+      markRead.type = "button";
+      markRead.addEventListener("click", async () => {
+        markRead.disabled = true;
+        try {
+          await updateDoc(doc(db, "users", activeUser.uid, "notifications", id), { read: true, readAt: serverTimestamp() });
+        } catch (error) {
+          console.error("Could not mark notification read:", error);
+          showError("Could not update that notification. Please try again.");
+          markRead.disabled = false;
+        }
+      });
+      row.append(markRead);
+    }
+    list.append(row);
+  });
+}
+
+function watchNotifications(user) {
+  if (stopWatchingNotifications) stopWatchingNotifications();
+  const notificationsQuery = query(
+    collection(db, "users", user.uid, "notifications"),
+    orderBy("createdAt", "desc"),
+    limit(25)
+  );
+  stopWatchingNotifications = onSnapshot(notificationsQuery, renderNotifications, (error) => {
+    console.error("Could not load notifications:", error);
+    showError("Notifications could not be loaded. Check your connection and Firestore rules.");
+  });
+}
+
+async function markAllNotificationsRead() {
+  const button = $("#markAllNotificationsReadButton");
+  setBusy(button, true, "Updating…");
+  try {
+    const snapshot = await getDocs(query(
+      collection(db, "users", activeUser.uid, "notifications"),
+      orderBy("createdAt", "desc"),
+      limit(25)
+    ));
+    const unread = snapshot.docs.filter((item) => !item.data().read);
+    if (!unread.length) return;
+    const batch = writeBatch(db);
+    unread.forEach((item) => batch.update(item.ref, { read: true, readAt: serverTimestamp() }));
+    await batch.commit();
+  } catch (error) {
+    console.error("Could not mark notifications read:", error);
+    showError("Could not update notifications. Please try again.");
+  } finally {
+    setBusy(button, false);
+  }
 }
 
 function closeForms() {
@@ -180,6 +267,12 @@ async function recordDemoPayout(applicationId, application) {
     demo: true,
     createdAt: serverTimestamp()
   });
+  stageNotification(
+    batch,
+    "demo_payout_recorded",
+    "Demo payout recorded",
+    "A simulated payout of " + money.format(Number(application.requestedAmount) || 0) + " was added to your loan tracker."
+  );
   try {
     await batch.commit();
     await refresh();
@@ -239,7 +332,11 @@ async function loadDashboard(user) {
   showError("");
   $("#userEmail").textContent = user.email || "Google account";
   const profileSnap = await getDoc(doc(db, "users", user.uid));
-  const name = profileSnap.exists() ? profileSnap.data().fullName : user.displayName;
+  const fallbackName = user.displayName || user.email?.split("@")[0] || "KoloRise User";
+  originalProfileName = fallbackName.trim();
+  const name = profileSnap.exists() ? profileSnap.data().fullName : originalProfileName;
+  $("#profileFullName").value = name || originalProfileName;
+  $("#profileEmail").value = user.email || "";
   $("#userName").textContent = (name || user.email?.split("@")[0] || "there").split(" ")[0];
 
   const userPath = (name) => collection(db, "users", user.uid, name);
@@ -276,6 +373,65 @@ $("#signOutBtn").addEventListener("click", async (event) => {
   catch (error) { console.error("Sign out failed:", error); showError("Could not sign out. Please try again."); setBusy(button, false); }
 });
 
+$("#openProfileButton").addEventListener("click", () => {
+  $("#notificationsSection").hidden = true;
+  $("#toggleNotificationsButton").setAttribute("aria-expanded", "false");
+  $("#profileSection").hidden = !$("#profileSection").hidden;
+  if (!$("#profileSection").hidden) $("#profileFullName").focus();
+});
+$("#closeProfileButton").addEventListener("click", () => { $("#profileSection").hidden = true; });
+$("#toggleNotificationsButton").addEventListener("click", (event) => {
+  $("#profileSection").hidden = true;
+  const section = $("#notificationsSection");
+  section.hidden = !section.hidden;
+  event.currentTarget.setAttribute("aria-expanded", String(!section.hidden));
+});
+$("#closeNotificationsButton").addEventListener("click", () => {
+  $("#notificationsSection").hidden = true;
+  $("#toggleNotificationsButton").setAttribute("aria-expanded", "false");
+});
+$("#markAllNotificationsReadButton").addEventListener("click", markAllNotificationsRead);
+
+$("#profileForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const fullName = $("#profileFullName").value.trim();
+  const button = $("#saveProfileButton");
+  if (fullName.length < 2) return formMessage("#profileMessage", "Enter a name with at least 2 characters.");
+  setBusy(button, true, "Saving...");
+  try {
+    const batch = writeBatch(db);
+    batch.update(doc(db, "users", activeUser.uid), { fullName, updatedAt: serverTimestamp() });
+    stageNotification(batch, "profile_updated", "Profile updated", "Your display name was updated.");
+    await batch.commit();
+    $("#userName").textContent = fullName.split(" ")[0];
+    formMessage("#profileMessage", "Your profile has been updated.");
+  } catch (error) {
+    console.error("Could not update profile:", error);
+    formMessage("#profileMessage", "Could not update your profile. Check your connection and Firestore rules.");
+  } finally {
+    setBusy(button, false);
+  }
+});
+
+$("#resetProfileButton").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  setBusy(button, true, "Restoring...");
+  try {
+    const batch = writeBatch(db);
+    batch.update(doc(db, "users", activeUser.uid), { fullName: originalProfileName, updatedAt: serverTimestamp() });
+    stageNotification(batch, "profile_reset", "Profile restored", "Your display name was restored to its sign-in account default.");
+    await batch.commit();
+    $("#profileFullName").value = originalProfileName;
+    $("#userName").textContent = originalProfileName.split(" ")[0];
+    formMessage("#profileMessage", "Your display name was restored. Your savings and activity are unchanged.");
+  } catch (error) {
+    console.error("Could not restore profile:", error);
+    formMessage("#profileMessage", "Could not restore your profile. Check your connection and Firestore rules.");
+  } finally {
+    setBusy(button, false);
+  }
+});
+
 $("#newGoalButton").addEventListener("click", () => { closeForms(); $("#newGoalForm").hidden = false; $("#newGoalName").focus(); });
 $("#newLoanApplicationButton").addEventListener("click", () => { closeForms(); $("#loanApplicationForm").hidden = false; $("#applicationAmount").focus(); updateEligibilityMessage(); });
 $("#newDepositButton").addEventListener("click", () => { closeForms(); $("#depositForm").hidden = false; $("#depositGoal").focus(); });
@@ -300,7 +456,10 @@ $("#newGoalForm").addEventListener("submit", async (event) => {
   formMessage("#goalFormMessage", ""); showError(""); setBusy(button, true, "Saving...");
   try {
     const ref = doc(collection(db, "users", activeUser.uid, "goals"));
-    await writeBatch(db).set(ref, { name, description, targetAmount, savedAmount: 0, status: "active", createdAt: serverTimestamp() }).commit();
+    const batch = writeBatch(db);
+    batch.set(ref, { name, description, targetAmount, savedAmount: 0, status: "active", createdAt: serverTimestamp() });
+    stageNotification(batch, "goal_created", "Savings goal created", "Your goal “" + name + "” is ready for demo deposits.");
+    await batch.commit();
     form.reset(); closeForms(); await refresh();
   } catch (error) { console.error("Could not save goal:", error); formMessage("#goalFormMessage", "Could not save this goal. Check your connection and Firestore rules."); }
   finally { setBusy(button, false); }
@@ -329,6 +488,7 @@ $("#loanApplicationForm").addEventListener("submit", async (event) => {
       status: "pending",
       createdAt: serverTimestamp()
     });
+    stageNotification(batch, "application_submitted", "Loan application submitted", "Your demo request for " + money.format(amount) + " is waiting for staff review.");
     await batch.commit();
     event.currentTarget.reset(); closeForms(); await refresh();
   } catch (error) {
@@ -352,6 +512,7 @@ $("#depositForm").addEventListener("submit", async (event) => {
     const batch = writeBatch(db);
     batch.update(goalRef, { savedAmount: (Number(goal.data.savedAmount) || 0) + amount, updatedAt: serverTimestamp() });
     batch.set(transactionRef, { type: "deposit", amount, goalId, goalName: goal.data.name, demo: true, createdAt: serverTimestamp() });
+    stageNotification(batch, "deposit_recorded", "Demo deposit recorded", money.format(amount) + " was added to “" + goal.data.name + "”.");
     await batch.commit();
     event.currentTarget.reset(); closeForms(); await refresh();
   } catch (error) { console.error("Could not record deposit:", error); formMessage("#depositFormMessage", "Could not record the demo deposit. Check your connection and Firestore rules."); }
@@ -370,6 +531,7 @@ $("#newLoanForm").addEventListener("submit", async (event) => {
     const ref = doc(collection(db, "users", activeUser.uid, "loans"));
     const batch = writeBatch(db);
     batch.set(ref, { name, startingAmount, remainingAmount: startingAmount, dueDate, status: "active", createdAt: serverTimestamp() });
+    stageNotification(batch, "loan_added", "Loan added to tracker", "“" + name + "” was added to your personal loan tracker.");
     await batch.commit();
     event.currentTarget.reset(); closeForms(); await refresh();
   } catch (error) { console.error("Could not save loan:", error); formMessage("#loanFormMessage", "Could not save this loan. Check your connection and Firestore rules."); }
@@ -401,6 +563,7 @@ $("#repaymentForm").addEventListener("submit", async (event) => {
     const batch = writeBatch(db);
     batch.update(loanRef, { remainingAmount, status: remainingAmount === 0 ? "paid" : "active", updatedAt: serverTimestamp() });
     batch.set(transactionRef, { type: "loan_repayment", amount, loanId, loanName: loan.data.name, demo: true, createdAt: serverTimestamp() });
+    stageNotification(batch, "repayment_recorded", "Demo repayment recorded", money.format(amount) + " was recorded for “" + loan.data.name + "”.");
     await batch.commit();
     form.reset(); closeForms(); await refresh();
   } catch (error) { console.error("Could not record repayment:", error); formMessage("#repaymentFormMessage", "Could not record the demo repayment. Check your connection and Firestore rules."); }
@@ -408,7 +571,11 @@ $("#repaymentForm").addEventListener("submit", async (event) => {
 });
 
 onAuthStateChanged(auth, (user) => {
-  if (!user) return;
+  if (!user) {
+    if (stopWatchingNotifications) stopWatchingNotifications();
+    return;
+  }
   activeUser = user;
+  watchNotifications(user);
   refresh();
 });

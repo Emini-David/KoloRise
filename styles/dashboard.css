@@ -25,6 +25,20 @@
 .dashboard-list { overflow: hidden; background: #fff; border: 1px solid #e8edf4; border-radius: 14px; }
 .empty-state { padding: 22px; margin: 0; color: #748094; font-size: 14px; }
 .dashboard-notice { margin: 0 0 22px; padding: 13px 16px; color: #805b11; background: #fff7df; border: 1px solid #f3dfaa; border-radius: 10px; font-size: 13px; }
+.account-panel { padding: 20px; background: #fff; border: 1px solid #e8edf4; border-radius: 16px; }
+.account-panel .section-heading { margin-bottom: 12px; }
+#profileEmailHelp { color: #758093; font-size: 11px; font-weight: 400; }
+.notification-toggle { position: relative; }
+.notification-count { min-width: 19px; height: 19px; display: inline-grid; place-items: center; padding: 0 5px; color: #fff; background: #b54736; border-radius: 10px; font-size: 10px; line-height: 1; }
+.notification-count[hidden] { display: none; }
+.notification-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; padding: 16px 20px; border-bottom: 1px solid #edf0f5; }
+.notification-row:last-child { border-bottom: 0; }
+.notification-row.is-unread { background: #f3faf6; }
+.notification-copy { min-width: 0; }
+.notification-copy h3 { margin: 0; font-size: 13px; }
+.notification-copy p { margin: 5px 0 0; color: #687589; font-size: 12px; line-height: 1.5; }
+.notification-copy time { display: block; margin-top: 6px; color: #8a94a4; font-size: 10px; }
+.notification-row .btn { width: auto; flex: 0 0 auto; padding: 7px 10px; font-size: 11px; }
 .goal-form { margin: 0 0 16px; padding: 20px; background: #fff; border: 1px solid #e8edf4; border-radius: 14px; }
 .demo-note { margin: 0 0 16px; color: #687589; font-size: 13px; line-height: 1.6; }
 .goal-form-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -67,21 +81,23 @@
   .dashboard-user {
     min-width: 0;
     width: 100%;
-    flex-wrap: nowrap;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     gap: 12px;
   }
 
   .welcome-label { display: none; }
 
   .user-email {
+    flex: 1 1 150px;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .dashboard-user .btn { flex: 0 0 auto; }
+  .dashboard-user .btn { flex: 0 0 auto; padding: 9px 13px; font-size: 12px; }
+  .notification-row { flex-direction: column; }
 
   .dashboard-main {
     width: 90%;

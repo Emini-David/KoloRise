@@ -137,6 +137,7 @@ exports.reviewLoanApplication = onCall({ region: REGION }, async (request) => {
 
   const applicationRef = db.doc(`users/${uid}/loanApplications/${applicationId}`);
   const auditRef = db.collection("adminAuditLogs").doc();
+  const notificationRef = db.collection("users/" + uid + "/notifications").doc();
   await db.runTransaction(async (transaction) => {
     const snapshot = await transaction.get(applicationRef);
     if (!snapshot.exists) throw new HttpsError("not-found", "The application could not be found.");
@@ -159,6 +160,15 @@ exports.reviewLoanApplication = onCall({ region: REGION }, async (request) => {
       reason,
       previousStatus: before.status,
       newStatus: decision,
+      createdAt: now
+    });
+    transaction.create(notificationRef, {
+      type: "application_" + decision,
+      title: decision === "approved" ? "Demo application approved" : "Demo application declined",
+      message: decision === "approved"
+        ? "Staff approved your demo loan request. You can record a simulated payout from your dashboard."
+        : "Staff declined your demo loan request. Review the note on your application for more information.",
+      read: false,
       createdAt: now
     });
   });

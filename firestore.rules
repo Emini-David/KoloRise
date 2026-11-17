@@ -25,8 +25,11 @@ service cloud.firestore {
         && request.resource.data.fullName is string
         && request.resource.data.email is string;
       allow update: if signedInAs(uid)
-        && request.resource.data.keys().hasOnly(['fullName', 'email', 'createdAt', 'updatedAt'])
-        && request.resource.data.get('balance', null) == resource.data.get('balance', null);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'updatedAt'])
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 2
+        && request.resource.data.fullName.size() <= 80
+        && request.resource.data.updatedAt is timestamp;
       allow delete: if false;
 
       match /goals/{goalId} {
@@ -145,6 +148,26 @@ service cloud.firestore {
               && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.startingAmount == request.resource.data.amount
               && getAfter(userLoanPath(uid, request.resource.data.loanId)).data.applicationId is string));
         allow update, delete: if false;
+      }
+
+      match /notifications/{notificationId} {
+        allow read: if signedInAs(uid);
+        allow create: if signedInAs(uid)
+          && request.resource.data.keys().hasOnly(['type', 'title', 'message', 'read', 'createdAt'])
+          && request.resource.data.keys().hasAll(['type', 'title', 'message', 'read', 'createdAt'])
+          && request.resource.data.type in ['profile_updated', 'profile_reset', 'goal_created', 'deposit_recorded', 'application_submitted', 'demo_payout_recorded', 'loan_added', 'repayment_recorded']
+          && request.resource.data.title is string
+          && request.resource.data.title.size() <= 80
+          && request.resource.data.message is string
+          && request.resource.data.message.size() <= 280
+          && request.resource.data.read == false
+          && request.resource.data.createdAt is timestamp;
+        allow update: if signedInAs(uid)
+          && resource.data.read == false
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt'])
+          && request.resource.data.read == true
+          && request.resource.data.readAt is timestamp;
+        allow delete: if false;
       }
     }
   }

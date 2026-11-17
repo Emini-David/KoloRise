@@ -54,6 +54,10 @@ The floating guide appears on the home, sign-in, sign-up, and user dashboard pag
 
 The admin endpoints verify the custom claim on every request. Application decisions and append-only audit entries are written together by a trusted function. Firestore client rules no longer let users approve or reject their own applications; users can record a demo payout only after staff approval. The admin page is public static hosting, but its data and actions remain protected by the callable functions.
 
+## Profile and notifications
+
+Users can edit their display name in the dashboard profile panel or restore it to the name from their sign-in account. The authentication email is read-only in the dashboard. The notification center shows recent profile, savings, loan-tracking, and staff-review updates, with unread counts and read controls.
+
 ## Data and security
 
 Each user's profile, goals, loan applications, loans, and transaction records are stored under `users/{uid}`. Firestore rules restrict access to the signed-in user's own records. The 50% check is repeated in the rules, so changing the browser code alone cannot submit an ineligible request. Keep the deployed rules in sync with `firestore.rules`.

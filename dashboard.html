@@ -20,6 +20,10 @@
     <div class="dashboard-user">
       <span class="welcome-label">Signed in as</span>
       <span id="userEmail" class="user-email">Loading...</span>
+      <button id="openProfileButton" class="btn btn-outline" type="button">Profile</button>
+      <button id="toggleNotificationsButton" class="btn btn-outline notification-toggle" type="button" aria-expanded="false" aria-controls="notificationsSection">
+        Notifications <span id="unreadNotificationCount" class="notification-count" hidden></span>
+      </button>
       <button id="signOutBtn" class="btn btn-outline" type="button">Sign out</button>
     </div>
   </header>
@@ -32,6 +36,24 @@
     </div>
 
     <div id="dashboardError" class="dashboard-notice" role="status" hidden></div>
+
+    <section id="profileSection" class="dashboard-section account-panel" aria-labelledby="profileTitle" hidden>
+      <div class="section-heading"><div><p class="eyebrow">YOUR ACCOUNT</p><h2 id="profileTitle">Profile</h2></div><button id="closeProfileButton" class="btn btn-outline" type="button">Close</button></div>
+      <p class="demo-note">Update your display name or restore it to the name from your sign-in account. Restoring your profile does not delete savings, loans, or activity.</p>
+      <form id="profileForm" class="goal-form">
+        <div class="goal-form-fields">
+          <label>Full name<input id="profileFullName" name="fullName" type="text" maxlength="80" autocomplete="name" required></label>
+          <label>Email address<input id="profileEmail" name="email" type="email" readonly aria-describedby="profileEmailHelp"><small id="profileEmailHelp">Your sign-in email is managed by your authentication provider.</small></label>
+        </div>
+        <div class="goal-form-actions"><p id="profileMessage" role="status" hidden></p><button class="btn btn-primary" id="saveProfileButton" type="submit">Save profile</button><button class="btn btn-outline" id="resetProfileButton" type="button">Restore defaults</button></div>
+      </form>
+    </section>
+
+    <section id="notificationsSection" class="dashboard-section account-panel" aria-labelledby="notificationsTitle" hidden>
+      <div class="section-heading"><div><p class="eyebrow">ACCOUNT UPDATES</p><h2 id="notificationsTitle">Notifications</h2></div><div class="section-actions"><button id="markAllNotificationsReadButton" class="btn btn-outline" type="button">Mark visible read</button><button id="closeNotificationsButton" class="btn btn-outline" type="button">Close</button></div></div>
+      <div id="notificationsList" class="dashboard-list"><p class="empty-state">Loading notifications…</p></div>
+      <p class="table-footnote">Showing up to 25 recent notifications.</p>
+    </section>
 
     <section class="dashboard-summary" aria-label="Savings summary">
       <article class="summary-card balance-card"><span class="summary-label">Tracked savings (demo)</span><strong id="savingsBalance">Loading...</strong><span class="summary-hint" id="balanceHint">Demo entries only. No money is transferred.</span></article>
