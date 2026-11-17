@@ -1,6 +1,5 @@
 const root = document.createElement("div");
 root.innerHTML = `
-  <button class="assistant-launcher" type="button" aria-label="Open KoloRise chatbot" aria-expanded="false" aria-controls="koloriseAssistant"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 18.2 3.5 21l4.2-1.1A9.5 9.5 0 1 0 5 18.2Z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg><span>Chat</span></button>
   <section class="assistant-panel" id="koloriseAssistant" aria-label="KoloRise personal assistant" hidden>
     <header class="assistant-head"><div><strong>KoloRise</strong><span>Your personal assistant</span></div><button class="assistant-close" type="button" aria-label="Close assistant">×</button></header>
     <div class="assistant-messages" role="log" aria-live="off" aria-relevant="additions"></div>
@@ -13,7 +12,7 @@ root.innerHTML = `
   </section>`;
 document.body.append(root);
 
-const launcher = root.querySelector(".assistant-launcher");
+const launcher = document.querySelector(".assistant-launcher");
 const panel = root.querySelector(".assistant-panel");
 const messages = root.querySelector(".assistant-messages");
 const form = root.querySelector(".assistant-form");
